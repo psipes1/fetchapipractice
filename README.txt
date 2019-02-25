@@ -1,0 +1,1 @@
+A simple Fetch API learning session. Getting familiar with how it works, whether using a local .txt file, a JSON file or a third party API. Also, practice with making a post request to an API. 
