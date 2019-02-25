@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Fetch API Sandbox</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
+      integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="main.css" />
+  </head>
+  <body>
+    <div class="container">
+      <br>
+      <br>
+      <h1 class="display-4 mb-4 text-center">Fetch API Practice</h1>
+      <br />
+      <br />
+
+      <div class="text-center">
+        <button class="btn btn-primary btn-sm" id="getText">. txt</button>
+        <button class="btn btn-success btn-sm" id="getUsers">. JSON</button>
+        <button class="btn btn-info btn-sm" id="getPosts">3rd Party</button>
+      </div>
+      <hr />
+      <!-- Where Fetch API output goes -->
+      <div id="output"></div>
+      <br>
+      <br>
+      <div class="text-center">
+          <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapse" aria-expanded="false" aria-controls="collapse">
+              New Post
+            </button>
+      </div>
+      
+      <br>
+      <br>
+      <!-- Form to POST to 3rd Party API -->
+      <div class="collapse text-center" id="collapse">
+        <h3>Make a New Post</h3>
+        <form id="addPost">
+          <div class="row justify-content-center">
+              <div class="form-group col-6">
+                  <input
+                    type="text"
+                    id="title"
+                    class="form-control"
+                    placeholder="Title"
+                  />
+                </div>
+          </div>
+          
+          
+        <div class="row justify-content-center">
+            <div class="form-group col-6">
+                <textarea
+                  id="body"
+                  class="form-control"
+                  placeholder="Body"
+                ></textarea>
+                <small id="passwordHelpBlock" class="form-text text-muted">
+                    This simulates a POST request, but doesn't actually send anything to a DB. As the Alert states, check the console after submitting...
+                  </small>
+              </div>
+
+        </div>
+            
+            <input type="submit" class="btn btn-secondary" value="Submit" />
+          </form>
+
+      </div>
+      
+
+    
+        
+      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>  
+    <script>
+      document.getElementById("getText").addEventListener("click", getText);
+      document.getElementById("getUsers").addEventListener("click", getUsers);
+      document.getElementById("getPosts").addEventListener("click", getPosts);
+      document.getElementById("addPost").addEventListener("submit", addPost);
+
+      //Grabs sample.txt text
+      function getText() {
+        fetch("sample.txt")
+          .then(function(res) {
+            return res.text();
+          })
+          .then(function(data) {
+            console.log(data);
+          });
+
+        fetch("sample.txt")
+          .then(res => res.text())
+          .then(data => {
+            document.getElementById("output").innerHTML = data;
+          })
+          .catch(err => console.log(err));
+      }
+      //grabs users.json info
+      function getUsers() {
+        fetch("users.json")
+          .then(res => res.json())
+          .then(data => {
+            let output = '<h2 class="mb-4 text-center">Users</h2>';
+            data.forEach(function(user) {
+              output += `
+            <ul class="list-group mb-3">
+              <li class="list-group-item"><strong>ID:</strong> ${user.id}</li>
+              <li class="list-group-item"><strong>Name:</strong> ${user.name}</li>
+              <li class="list-group-item"><strong>Email:</strong> ${user.email}</li>
+            </ul>
+          `;
+            });
+            document.getElementById("output").innerHTML = output;
+          });
+      }
+      //grabs post title and body from 3rd party API URL
+      function getPosts() {
+        fetch("https://jsonplaceholder.typicode.com/posts")
+          .then(res => res.json())
+          .then(data => {
+            let output = '<h2 class="mb-4 text-center">Posts</h2>';
+            data.forEach(function(post) {
+              output += `
+            <div class="card card-body mb-3">
+              <h3>${post.title}</h3>
+              <p>${post.body}</p>
+            </div>
+          `;
+            });
+            document.getElementById("output").innerHTML = output;
+          });
+      }
+      //Make POST request to 3rd party API and simulated a post
+      function addPost(e) {
+        e.preventDefault();
+
+        let title = document.getElementById("title").value;
+        let body = document.getElementById("body").value;
+
+        fetch("https://jsonplaceholder.typicode.com/posts", {
+          method: "POST",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-type": "application/json"
+          },
+          body: JSON.stringify({ title: title, body: body })
+        })
+          .then(res => res.json())
+          .then(data => console.log(data))
+          .then(alert("New Post Submitted: Check Console"));
+        
+      }
+    </script>
+  </body>
+</html>
